@@ -7,10 +7,11 @@ import {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const representative = await getRepresentativeById(params.id);
+    const { id } = await params;
+    const representative = await getRepresentativeById(id);
     
     if (!representative) {
       return NextResponse.json(
@@ -31,11 +32,12 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
-    const result = await updateRepresentative(params.id, body);
+    const result = await updateRepresentative(id, body);
 
     if (result.length === 0) {
       return NextResponse.json(
@@ -56,10 +58,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const result = await archiveRepresentative(params.id);
+    const { id } = await params;
+    const result = await archiveRepresentative(id);
 
     if (result.length === 0) {
       return NextResponse.json(

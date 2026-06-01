@@ -3,10 +3,11 @@ import { getAccountsByRepresentative } from '@/lib/db/queries';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const accounts = await getAccountsByRepresentative(params.id);
+    const { id } = await params;
+    const accounts = await getAccountsByRepresentative(id);
     return NextResponse.json(accounts);
   } catch (error) {
     console.error('[v0] Error fetching accounts:', error);
