@@ -5,6 +5,9 @@ export default function Home() {
       <p className="mt-4 text-xl text-gray-600">
         Your application is now live and ready to build!
       </p>
+      <p className="mt-2 text-sm text-gray-500">
+        v1 - Deployment fixed
+      </p>
     </main>
   );
 }
