@@ -1,6 +1,43 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
 export default function Home() {
+  const [isChecking, setIsChecking] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/session');
+        if (response.ok) {
+          setIsAuthenticated(true);
+          router.push('/dashboard');
+        }
+      } catch (error) {
+        console.error('[v0] Auth check failed:', error);
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className="w-full">
       {/* Navigation */}
@@ -37,12 +74,18 @@ export default function Home() {
                 A powerful platform designed to streamline your business operations, manage customer relationships, and empower your sales team with the tools they need to succeed.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <button className="bg-primary text-primary-foreground px-8 py-3 rounded-lg hover:bg-blue-700 transition font-semibold">
-                  Start Free Trial
-                </button>
-                <button className="border-2 border-primary text-primary px-8 py-3 rounded-lg hover:bg-muted transition font-semibold">
-                  Watch Demo
-                </button>
+                <Link
+                  href="/login"
+                  className="bg-primary text-primary-foreground px-8 py-3 rounded-lg hover:bg-blue-700 transition font-semibold text-center"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/login"
+                  className="border-2 border-primary text-primary px-8 py-3 rounded-lg hover:bg-muted transition font-semibold text-center"
+                >
+                  Admin Portal
+                </Link>
               </div>
             </div>
             <div className="hidden md:block">
