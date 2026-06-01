@@ -2,11 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --secondary: #64748b;
+  --secondary-foreground: #ffffff;
+  --accent: #0ea5e9;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
-body {
-  background: white;
-  color: black;
+@layer components {
+  body {
+    @apply bg-white text-[#0f172a];
+  }
 }
