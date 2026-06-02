@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { LanguageToggle } from '@/components/language-toggle';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 export default function DashboardLayout({
   children,
@@ -13,6 +16,7 @@ export default function DashboardLayout({
   const [user, setUser] = useState<{ email: string } | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -58,7 +62,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-muted flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-background border-r border-border p-6 sticky top-0 h-screen overflow-y-auto">
+      <aside className="w-64 bg-background border-e border-border p-6 sticky top-0 h-screen overflow-y-auto flex flex-col">
         <div className="flex items-center gap-2 mb-8">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">CP</span>
@@ -76,7 +80,7 @@ export default function DashboardLayout({
             }`}
           >
             <span className="text-xl">📊</span>
-            <span>Dashboard</span>
+            <span>{t.nav.dashboard}</span>
           </Link>
           <Link
             href="/dashboard/representatives"
@@ -87,7 +91,7 @@ export default function DashboardLayout({
             }`}
           >
             <span className="text-xl">👥</span>
-            <span>Representatives</span>
+            <span>{t.nav.representatives}</span>
           </Link>
           <Link
             href="/dashboard/customer-types"
@@ -98,20 +102,24 @@ export default function DashboardLayout({
             }`}
           >
             <span className="text-xl">🏷️</span>
-            <span>Customer Types</span>
+            <span>{t.nav.customerTypes}</span>
           </Link>
         </nav>
 
-        <div className="border-t border-border pt-4">
-          <div className="mb-4 p-3 bg-muted rounded-lg">
-            <p className="text-xs text-secondary uppercase font-semibold">Logged in as</p>
+        <div className="mt-auto border-t border-border pt-4">
+          <div className="mb-3 p-3 bg-muted rounded-lg">
+            <p className="text-xs text-secondary uppercase font-semibold">{t.nav.loggedInAs}</p>
             <p className="text-sm text-foreground font-semibold truncate">{user?.email}</p>
+          </div>
+          <div className="flex items-center gap-2 mb-3">
+            <ThemeToggle />
+            <LanguageToggle />
           </div>
           <button
             onClick={handleLogout}
-            className="w-full px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition font-semibold text-sm"
+            className="w-full px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition font-semibold text-sm dark:bg-red-950 dark:text-red-400 dark:hover:bg-red-900"
           >
-            Logout
+            {t.nav.logout}
           </button>
         </div>
       </aside>

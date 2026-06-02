@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 interface CustomerType {
   id: string;
@@ -17,6 +18,7 @@ export default function CustomerTypesPage() {
   const [error, setError] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchCustomerTypes();
@@ -31,7 +33,7 @@ export default function CustomerTypesPage() {
       setTypes(data);
       setError('');
     } catch (err) {
-      setError('Failed to load customer types');
+      setError(t.customerTypes.failedToLoad);
       console.error('[v0] Error:', err);
     } finally {
       setIsLoading(false);
@@ -39,11 +41,11 @@ export default function CustomerTypesPage() {
   };
 
   const handleArchive = async (id: string) => {
-    if (!confirm('Are you sure you want to archive this customer type?')) return;
+    if (!confirm(t.customerTypes.archiveConfirm)) return;
     try {
       const response = await fetch(`/api/customer-types/${id}`, { method: 'DELETE' });
       if (response.ok) {
-        setTypes(types.filter(t => t.id !== id));
+        setTypes(types.filter(ty => ty.id !== id));
       }
     } catch (err) {
       console.error('[v0] Error archiving:', err);
@@ -64,7 +66,7 @@ export default function CustomerTypesPage() {
       });
       if (response.ok) {
         const updated = await response.json();
-        setTypes(types.map(t => (t.id === id ? updated : t)));
+        setTypes(types.map(ty => (ty.id === id ? updated : ty)));
         setEditingId(null);
       }
     } catch (err) {
@@ -73,7 +75,7 @@ export default function CustomerTypesPage() {
   };
 
   const handleSort = async (id: string, direction: 'up' | 'down') => {
-    const index = types.findIndex(t => t.id === id);
+    const index = types.findIndex(ty => ty.id === id);
     if (
       (direction === 'up' && index === 0) ||
       (direction === 'down' && index === types.length - 1)
@@ -85,7 +87,6 @@ export default function CustomerTypesPage() {
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
     [newOrder[index], newOrder[targetIndex]] = [newOrder[targetIndex], newOrder[index]];
 
-    // Update sort orders
     for (let i = 0; i < newOrder.length; i++) {
       try {
         await fetch(`/api/customer-types/${newOrder[i].id}`, {
@@ -105,20 +106,20 @@ export default function CustomerTypesPage() {
     <div>
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Customer Types</h1>
-          <p className="text-secondary">Manage different types of customers in your system</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">{t.customerTypes.title}</h1>
+          <p className="text-secondary">{t.customerTypes.subtitle}</p>
         </div>
         <Link
           href="/dashboard/customer-types/new"
           className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-blue-700 transition font-semibold"
         >
-          Add Type
+          {t.customerTypes.addType}
         </Link>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-6">
-          <p className="text-red-700">{error}</p>
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-6 dark:bg-red-950 dark:border-red-800">
+          <p className="text-red-700 dark:text-red-400">{error}</p>
         </div>
       )}
 
@@ -126,17 +127,17 @@ export default function CustomerTypesPage() {
         <div className="flex items-center justify-center p-8">
           <div className="text-center">
             <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-foreground">Loading customer types...</p>
+            <p className="text-foreground">{t.customerTypes.loading}</p>
           </div>
         </div>
       ) : types.length === 0 ? (
         <div className="bg-background border border-border rounded-lg p-8 text-center">
-          <p className="text-secondary text-lg">No customer types found</p>
+          <p className="text-secondary text-lg">{t.customerTypes.noFound}</p>
           <Link
             href="/dashboard/customer-types/new"
             className="mt-4 inline-block bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-blue-700 transition"
           >
-            Add your first customer type
+            {t.customerTypes.addFirst}
           </Link>
         </div>
       ) : (
@@ -144,9 +145,9 @@ export default function CustomerTypesPage() {
           <table className="w-full">
             <thead className="bg-muted border-b border-border">
               <tr>
-                <th className="px-6 py-3 text-left font-semibold text-foreground">Name</th>
-                <th className="px-6 py-3 text-left font-semibold text-foreground">Order</th>
-                <th className="px-6 py-3 text-right font-semibold text-foreground">Actions</th>
+                <th className="px-6 py-3 text-start font-semibold text-foreground">{t.customerTypes.colName}</th>
+                <th className="px-6 py-3 text-start font-semibold text-foreground">{t.customerTypes.colOrder}</th>
+                <th className="px-6 py-3 text-end font-semibold text-foreground">{t.customerTypes.colActions}</th>
               </tr>
             </thead>
             <tbody>
@@ -158,7 +159,7 @@ export default function CustomerTypesPage() {
                         type="text"
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
-                        className="w-full px-3 py-1 border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-3 py-1 border border-border rounded bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                       />
                     ) : (
                       <div>
@@ -188,35 +189,35 @@ export default function CustomerTypesPage() {
                       </button>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-right space-x-2">
+                  <td className="px-6 py-4 text-end space-x-2 rtl:space-x-reverse">
                     {editingId === type.id ? (
                       <>
                         <button
                           onClick={() => handleSaveEdit(type.id)}
-                          className="px-3 py-1 bg-green-50 text-green-700 rounded hover:bg-green-100 transition text-sm"
+                          className="px-3 py-1 bg-green-50 text-green-700 rounded hover:bg-green-100 transition text-sm dark:bg-green-950 dark:text-green-400"
                         >
-                          Save
+                          {t.customerTypes.save}
                         </button>
                         <button
                           onClick={() => setEditingId(null)}
-                          className="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition text-sm"
+                          className="px-3 py-1 bg-muted text-foreground rounded hover:bg-border transition text-sm"
                         >
-                          Cancel
+                          {t.customerTypes.cancel}
                         </button>
                       </>
                     ) : (
                       <>
                         <button
                           onClick={() => handleEditClick(type)}
-                          className="px-3 py-1 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition text-sm"
+                          className="px-3 py-1 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition text-sm dark:bg-blue-950 dark:text-blue-400"
                         >
-                          Edit
+                          {t.customerTypes.edit}
                         </button>
                         <button
                           onClick={() => handleArchive(type.id)}
-                          className="px-3 py-1 bg-red-50 text-red-700 rounded hover:bg-red-100 transition text-sm"
+                          className="px-3 py-1 bg-red-50 text-red-700 rounded hover:bg-red-100 transition text-sm dark:bg-red-950 dark:text-red-400"
                         >
-                          Archive
+                          {t.customerTypes.archive}
                         </button>
                       </>
                     )}
