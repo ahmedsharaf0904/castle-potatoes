@@ -4,7 +4,7 @@ import {
   createCustomerType,
 } from '@/lib/db/queries';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const types = await getAllCustomerTypes();
     return NextResponse.json(types);

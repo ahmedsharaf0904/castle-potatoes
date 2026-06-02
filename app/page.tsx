@@ -6,7 +6,6 @@ import Link from 'next/link';
 
 export default function Home() {
   const [isChecking, setIsChecking] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -14,7 +13,6 @@ export default function Home() {
       try {
         const response = await fetch('/api/auth/session');
         if (response.ok) {
-          setIsAuthenticated(true);
           router.push('/dashboard');
         }
       } catch (error) {
