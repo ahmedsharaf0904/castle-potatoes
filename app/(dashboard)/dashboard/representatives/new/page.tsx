@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useLanguage } from '@/lib/i18n/language-context';
 
 export default function NewRepresentativePage() {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ export default function NewRepresentativePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { t } = useLanguage();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,7 +28,7 @@ export default function NewRepresentativePage() {
     setIsLoading(true);
 
     if (!formData.name.trim()) {
-      setError('Name is required');
+      setError(t.newRepresentative.nameRequired);
       setIsLoading(false);
       return;
     }
@@ -40,13 +42,13 @@ export default function NewRepresentativePage() {
 
       if (!response.ok) {
         const data = await response.json();
-        setError(data.error || 'Failed to create representative');
+        setError(data.error || t.newRepresentative.failedCreate);
         return;
       }
 
       router.push('/dashboard/representatives');
     } catch (err) {
-      setError('An error occurred while creating the representative');
+      setError(t.newRepresentative.errorOccurred);
       console.error('[v0] Error:', err);
     } finally {
       setIsLoading(false);
@@ -56,10 +58,10 @@ export default function NewRepresentativePage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Add Representative</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-2">{t.newRepresentative.title}</h1>
         <p className="text-secondary">
           <Link href="/dashboard/representatives" className="text-primary hover:underline">
-            Back to Representatives
+            {t.newRepresentative.backTo}
           </Link>
         </p>
       </div>
@@ -68,63 +70,63 @@ export default function NewRepresentativePage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Name *
+              {t.newRepresentative.name} *
             </label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="John Doe"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder={t.newRepresentative.namePlaceholder}
             />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Mobile
+              {t.newRepresentative.mobile}
             </label>
             <input
               type="tel"
               name="mobile"
               value={formData.mobile}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="+1 234 567 8900"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder={t.newRepresentative.mobilePlaceholder}
             />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Email
+              {t.newRepresentative.email}
             </label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="john@example.com"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder={t.newRepresentative.emailPlaceholder}
             />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Designation
+              {t.newRepresentative.designation}
             </label>
             <input
               type="text"
               name="designation"
               value={formData.designation}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Sales Manager"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder={t.newRepresentative.designationPlaceholder}
             />
           </div>
 
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-700 text-sm">{error}</p>
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg dark:bg-red-950 dark:border-red-800">
+              <p className="text-red-700 text-sm dark:text-red-400">{error}</p>
             </div>
           )}
 
@@ -134,13 +136,13 @@ export default function NewRepresentativePage() {
               disabled={isLoading}
               className="flex-1 bg-primary text-primary-foreground py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
             >
-              {isLoading ? 'Creating...' : 'Create Representative'}
+              {isLoading ? t.newRepresentative.creating : t.newRepresentative.create}
             </button>
             <Link
               href="/dashboard/representatives"
               className="flex-1 border border-border text-foreground py-2 rounded-lg hover:bg-muted transition font-semibold text-center"
             >
-              Cancel
+              {t.newRepresentative.cancel}
             </Link>
           </div>
         </form>
