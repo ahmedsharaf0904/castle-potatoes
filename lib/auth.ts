@@ -2,7 +2,9 @@ import { cookies } from 'next/headers';
 import { jwtVerify, SignJWT, type JWTPayload } from 'jose';
 
 const secret = new TextEncoder().encode(
-  process.env.AUTH_SECRET || 'dev-secret-key-change-in-production'
+  process.env.BETTER_AUTH_SECRET ||
+  process.env.AUTH_SECRET ||
+  'dev-secret-key-change-in-production'
 );
 
 export interface AuthPayload extends JWTPayload {
